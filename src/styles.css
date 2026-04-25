@@ -150,6 +150,12 @@
     border-color: var(--color-border);
   }
 
+  @media (pointer: fine) {
+    *, a, button, input, textarea, select {
+      cursor: none !important;
+    }
+  }
+
   html, body {
     background: var(--deep-space);
     color: var(--color-foreground);
