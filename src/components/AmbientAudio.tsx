@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Background music player.
- * Plays from the beginning on load, and auto-starts on first interaction.
+ * Plays from the beginning on load, stops when app is in background, and auto-starts on first interaction if blocked.
  */
 export function AmbientAudio() {
   const [on, setOn] = useState(false);
@@ -17,31 +17,46 @@ export function AmbientAudio() {
     audio.loop = true;
     audioRef.current = audio;
 
-    // Auto-play on first interaction anywhere on the document
-    const handleFirstInteraction = () => {
-      if (audioRef.current && audioRef.current.paused) {
-        audioRef.current.play().then(() => {
-          setOn(true);
-        }).catch((e) => {
-          console.error("Autoplay prevented:", e);
-        });
-      }
-      // Remove listeners after first interaction
-      document.removeEventListener("click", handleFirstInteraction);
-      document.removeEventListener("touchstart", handleFirstInteraction);
-    };
+    // Attempt automatic playback immediately
+    audio.play().then(() => {
+      setOn(true);
+    }).catch(() => {
+      // Autoplay blocked by browser, wait for interaction
+      const handleFirstInteraction = () => {
+        if (audioRef.current && audioRef.current.paused) {
+          audioRef.current.play().then(() => {
+            setOn(true);
+          }).catch((e) => console.error("Autoplay prevented:", e));
+        }
+        document.removeEventListener("click", handleFirstInteraction);
+        document.removeEventListener("touchstart", handleFirstInteraction);
+      };
 
-    document.addEventListener("click", handleFirstInteraction);
-    document.addEventListener("touchstart", handleFirstInteraction);
+      document.addEventListener("click", handleFirstInteraction);
+      document.addEventListener("touchstart", handleFirstInteraction);
+    });
+
+    // Pause audio when app is minimized or sent to background (Recent Apps)
+    const handleVisibilityChange = () => {
+      if (!audioRef.current) return;
+      if (document.hidden) {
+        audioRef.current.pause();
+      } else {
+        // Resume if it was turned on
+        if (on) {
+          audioRef.current.play().catch(() => {});
+        }
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       clearTimeout(t);
-      document.removeEventListener("click", handleFirstInteraction);
-      document.removeEventListener("touchstart", handleFirstInteraction);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       audio.pause();
       audio.src = "";
     };
-  }, []);
+  }, [on]); // Added 'on' to dependency array so visibility handler knows current state
 
   const toggle = () => {
     setHinted(false);
