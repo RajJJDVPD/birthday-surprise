@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Fireworks } from "./Fireworks";
+import finalBg from "@/assets/final-bg.jpg";
 
 export function Wish({ name }: { name: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -18,8 +19,19 @@ export function Wish({ name }: { name: string }) {
 
   return (
     <section ref={ref} className="relative z-10 min-h-screen overflow-hidden px-6 py-32">
+      {/* Background Image Layer */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={finalBg}
+          alt="Birthday Memory"
+          className="h-full w-full object-cover object-center opacity-30"
+        />
+        {/* Gradient overlay to ensure text readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/20" />
+      </div>
+
       {/* Fireworks layer (clickable to launch more) */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 z-0 pointer-events-auto">
         <Fireworks />
       </div>
 
