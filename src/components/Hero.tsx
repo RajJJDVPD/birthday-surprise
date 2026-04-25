@@ -61,7 +61,6 @@ export function Hero({ name }: HeroProps) {
         className="mt-12 opacity-0"
         style={{ animation: mounted ? "fade-up 1.4s ease-out 2.4s forwards" : undefined }}
       >
-        <p className="font-script mb-4 text-sm text-white/50 md:text-base">until your day begins</p>
         <Countdown />
       </div>
 
