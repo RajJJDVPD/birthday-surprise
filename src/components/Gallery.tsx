@@ -10,6 +10,8 @@ import m8 from "@/assets/memory-8.jpg";
 import m9 from "@/assets/memory-9.jpg";
 import m10 from "@/assets/memory-10.jpg";
 import m11 from "@/assets/memory-11.jpg";
+import m12 from "@/assets/memory-12.jpg";
+import m13 from "@/assets/memory-13.jpg";
 
 const memories = [
   { src: m1, caption: "under our sky", note: "the night the stars learned your name" },
@@ -23,6 +25,8 @@ const memories = [
   { src: m9, caption: "just us", note: "lost in our own perfect world" },
   { src: m10, caption: "your smile", note: "brighter than a thousand suns" },
   { src: m11, caption: "endless love", note: "my heart belongs to you" },
+  { src: m12, caption: "blessed together", note: "walking through life side by side" },
+  { src: m13, caption: "radiant moments", note: "you light up my whole existence" },
 ];
 
 function MemoryCard({
