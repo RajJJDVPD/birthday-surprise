@@ -31,7 +31,7 @@ export function Wish({ name }: { name: string }) {
       </div>
 
       {/* Fireworks layer (clickable to launch more) */}
-      <div className="absolute inset-0 z-0 pointer-events-auto">
+      <div className="absolute inset-0 z-0 pointer-events-auto mix-blend-screen">
         <Fireworks />
       </div>
 

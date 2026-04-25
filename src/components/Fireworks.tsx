@@ -67,11 +67,8 @@ export function Fireworks() {
 
     let raf = 0;
     const render = () => {
-      // Use destination-out to fade the previous frame to transparent instead of drawing a solid color
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.fillStyle = "rgba(0, 0, 0, 0.18)";
+      ctx.fillStyle = "rgba(8, 4, 25, 0.18)";
       ctx.fillRect(0, 0, w, h);
-      ctx.globalCompositeOperation = "lighter"; // 'lighter' creates a nice glowing effect for overlapping particles
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.life++;
