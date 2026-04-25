@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * Ambient background music player.
- * Plays a real audio file and remembers the playback position across page reloads.
+ * Background music player.
+ * Plays from the beginning on load, and auto-starts on first interaction.
  */
 export function AmbientAudio() {
   const [on, setOn] = useState(false);
@@ -15,24 +15,29 @@ export function AmbientAudio() {
     // Initialize audio element
     const audio = new Audio("/music.mp3");
     audio.loop = true;
-    
-    // Restore previous playback time
-    const savedTime = localStorage.getItem("birthday_music_time");
-    if (savedTime) {
-      audio.currentTime = parseFloat(savedTime);
-    }
-
-    // Save time continuously while playing
-    const handleTimeUpdate = () => {
-      localStorage.setItem("birthday_music_time", audio.currentTime.toString());
-    };
-    audio.addEventListener("timeupdate", handleTimeUpdate);
-
     audioRef.current = audio;
+
+    // Auto-play on first interaction anywhere on the document
+    const handleFirstInteraction = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().then(() => {
+          setOn(true);
+        }).catch((e) => {
+          console.error("Autoplay prevented:", e);
+        });
+      }
+      // Remove listeners after first interaction
+      document.removeEventListener("click", handleFirstInteraction);
+      document.removeEventListener("touchstart", handleFirstInteraction);
+    };
+
+    document.addEventListener("click", handleFirstInteraction);
+    document.addEventListener("touchstart", handleFirstInteraction);
 
     return () => {
       clearTimeout(t);
-      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      document.removeEventListener("click", handleFirstInteraction);
+      document.removeEventListener("touchstart", handleFirstInteraction);
       audio.pause();
       audio.src = "";
     };
@@ -55,7 +60,10 @@ export function AmbientAudio() {
 
   return (
     <button
-      onClick={toggle}
+      onClick={(e) => {
+        e.stopPropagation(); // Prevent triggering the document-level interaction twice
+        toggle();
+      }}
       aria-label={on ? "Pause music" : "Play music"}
       className="group fixed right-5 top-5 z-50 flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-white/5 backdrop-blur-md transition-all hover:scale-110 hover:bg-white/10"
       style={{ boxShadow: "0 0 30px oklch(0.55 0.22 305 / 0.35)" }}
